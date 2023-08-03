@@ -80,7 +80,7 @@ The `IOTData` contract is responsible for storing sensor data related to organ t
 1. Clone the project
 
 ```bash
-  git clone https://github.com/Shubham-tiwari123/medical-freelance
+  git clone https://github.com/Shubham-tiwari123/organ-donation.git
 ```
 
 2. Go to the project directory

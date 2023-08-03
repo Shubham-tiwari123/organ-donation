@@ -10,7 +10,7 @@
 1. Clone the project
 
 ```bash
-  git clone https://github.com/Shubham-tiwari123/medical-freelance
+  git clone https://github.com/Shubham-tiwari123/organ-donation.git
 ```
 2. Go to the project directory
 

@@ -5,7 +5,8 @@ import HospitalSideNav from '../sideNav'
 import { useParams } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
-import { HOSPITAL_CONSTANT } from '../../../constants/hospital/hospitalConstants';
+import { HOSPITAL_CONSTANT } from '../../../constants/hospitalConstants';
+import axios from 'axios';
 const { HOSPITAL_LOGIN_PAGE, GET_DOCTOR_PROFILE_DETAILS } = HOSPITAL_CONSTANT
 const { Content } = Layout;
 
@@ -42,30 +43,30 @@ const DoctorProfileView = () => {
       const jwtToken = localStorage.getItem('jwt');
       if (jwtToken) {
         const decoded = jwtDecode(jwtToken);
-        if (decoded && decoded.loginId) {
-          setLoginUserId(decoded.loginId);
+        if (decoded && decoded.sub) {
+          setLoginUserId(decoded.sub);
 
           let URL = `${GET_DOCTOR_PROFILE_DETAILS}=${doctorId}`
 
-          const response = await fetch(URL);
-          const { doctorProfile } = await response.json();
-          console.log("data2:", doctorProfile);
-          setFirstName(doctorProfile.firstName);
-          setSecondName(doctorProfile.secondName);
+          const response = await axios.get(URL);
+          const { data } = response.data;
+          const { doctorProfile } = data;
+          
+          setFirstName(doctorProfile.personalInfo.firstName);
+          setSecondName(doctorProfile.personalInfo.secondName);
           setEmail(doctorProfile.email);
-          setPhoneNumber(doctorProfile.phoneNumber);
-          setDob(doctorProfile.dob);
-          setGender(doctorProfile.gender);
-          setAddressFirstLine(doctorProfile.addressLine1);
-          setAddressSecondtLine(doctorProfile.addressLine2);
-          setCountry(doctorProfile.country);
-          setCity(doctorProfile.city);
-          setState(doctorProfile.state);
-          setPincode(doctorProfile.pincode);
+          setPhoneNumber(doctorProfile.personalInfo.phoneNumber);
+          setDob(doctorProfile.personalInfo.dob);
+          setGender(doctorProfile.personalInfo.gender);
+          setAddressFirstLine(doctorProfile.personalInfo.addressLine1);
+          setAddressSecondtLine(doctorProfile.personalInfo.addressLine2);
+          setCountry(doctorProfile.personalInfo.country);
+          setCity(doctorProfile.personalInfo.city);
+          setState(doctorProfile.personalInfo.state);
+          setPincode(doctorProfile.personalInfo.pincode);
 
           const renderCardDetails = () => {
-            return doctorProfile.idCard.map((card, index) => (
-              console.log("card details:", card),
+            return doctorProfile.personalInfo.cardDetails.map((card, index) => (
               <Row key={index}>
                 <Col span={8}>
                   <Form.Item label="Card Type">

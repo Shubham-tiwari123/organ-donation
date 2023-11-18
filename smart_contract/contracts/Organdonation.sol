@@ -7,7 +7,6 @@ contract OrganDonation {
     address owner;
     IUserRegistry userRegistry;
 
-    // Constructor initializes contract deployer as owner of this smart contract
     constructor(address userRegistryAddress) {
         owner = msg.sender;
         userRegistry = IUserRegistry(userRegistryAddress);
@@ -19,7 +18,7 @@ contract OrganDonation {
         _;
     }
 
-    // This modifier allows onlyRegistered Hospitals to access specific functionalities
+    // TODO: create Hospital Mapping, and allow registered hospitals for updating states.
     modifier onlyHospital() {
         require(
             userRegistry.isHospitalRegistered(msg.sender),
@@ -30,20 +29,16 @@ contract OrganDonation {
 
     uint requestCount = 0;
 
-    // Enum to maintain status of organ request
     enum Status {
         PENDING, //0
         MATCHED, //1
         DONOR_REJECTED, //2
-        DONOR_PROCEDURE_INPROGRESS, //3
-        DONOR_PROCEDURE_COMPLETE, //4
-        DONOR_ORGAN_SHIPPED, //5
-        ORGAN_RECEIVED, //6
-        PATIENT_PROCEDURE_INPROGRESS, // 7
-        COMPLETED //7
+        DONOR_PROCEDURE_COMPLETE, //3
+        DONOR_ORGAN_SHIPPED, //4
+        ORGAN_RECEIVED, //5
+        COMPLETED //6
     }
 
-    // User defined Organ Request Data type to keep track of organ request related activities
     struct OrganRequest {
         uint256 requestID;
         IUserRegistry.OrganType organType;
@@ -59,7 +54,7 @@ contract OrganDonation {
         IUserRegistry.UrgencyType urgencyLevel;
         Status status;
     }
-    // This data structure allows to lookup to historic data of patient-donor organ match validation summary
+
     struct organMatchSummary {
         uint BMIDifference;
         bool bloodGroupMatch;
@@ -68,15 +63,17 @@ contract OrganDonation {
         uint compatibilityScore;
     }
 
-    // Maintaining this array to store overall requests.
     OrganRequest[] organRequests;
 
-    // This mapping maps patients organ request to it`s donors organ match summary
     mapping(uint => organMatchSummary) public matchSummary;
 
-    // This are set of events that will be emitted
-    event OrganRequestRegistered(address indexed _patient, uint256 requestID);
-    event doctorsApproval(
+    event OrganRequestRegistered(
+        uint256 requestID,
+        address indexed patientAddress,
+        string message
+    );
+    event requestStateChanged(uint256 requestID, string message);
+    event doctorsConsent(
         bool consent,
         address indexed donor,
         uint256 indexed requestId
@@ -86,9 +83,10 @@ contract OrganDonation {
         address indexed patient,
         uint256 indexed requestId
     );
-    event matchStatus(uint requestID, string message);
+    event matchStatusSuccess(uint requestID, address indexed donor, string message);
+    event matchStatusFailed(uint requestID, address indexed donor, string message);
 
-    // This functionality allows patients surgeon only to approve the match organ.
+
     function registerDoctorApproval(bool consent, uint256 requestID) external {
         require(
             organRequests[requestID].status == Status.MATCHED,
@@ -98,13 +96,15 @@ contract OrganDonation {
             msg.sender == organRequests[requestID].patientSurgeon,
             "invalid donor"
         );
-        organRequests[requestID].doctorApproval = true;
-        emit doctorsApproval(consent, msg.sender, requestID);
+        if (consent == true) {
+            organRequests[requestID].doctorApproval = true;
+            emit doctorsConsent(consent, msg.sender, requestID);
+        } else if (consent == false) {
+            organRequests[requestID].doctorApproval = false;
+            emit doctorsConsent(consent, msg.sender, requestID);
+        }
     }
 
-    // This function allows patient to give their consent, and prove their acceptance of organ that is matched with donor.
-    // Incase, if patient does not wants to accept the organ from the donor, matched patient can pass thier consent as false.
-    // So, that particular organ request is registered in thier refusal list.
     function registerPatientConsent(bool consent, uint256 requestID) external {
         require(
             organRequests[requestID].status == Status.MATCHED,
@@ -117,6 +117,7 @@ contract OrganDonation {
         if (consent == true) {
             organRequests[requestID].patientConsentDate = block.timestamp;
             organRequests[requestID].patientConsent = consent;
+            emit patientConsent(consent, msg.sender, requestID);
         } else if (consent == false) {
             userRegistry.addRefusal(msg.sender, requestID);
             organRequests[requestID].status = Status.DONOR_REJECTED;
@@ -124,10 +125,6 @@ contract OrganDonation {
         emit patientConsent(consent, msg.sender, requestID);
     }
 
-    // This function is invoked from patients hospital, to raise request for organ required by the patient
-    // This function takes input of patients organ required and his/her urgencylevel
-    // This function will accumlate required details for organ required by patient and will give out requestId.
-    // The requestId will be further used every where as reference to complete following procedures.
     function registerOrganRequest(
         address _patient,
         IUserRegistry.UrgencyType _urgencyLevel,
@@ -162,12 +159,14 @@ contract OrganDonation {
             )
         );
 
-        emit OrganRequestRegistered(_patient, requestCount);
+        emit OrganRequestRegistered(
+            requestCount,
+            _patient,
+            "patient organ request registered"
+        );
         return requestCount;
     }
 
-    // This function designed to implement blood group compatibility validation
-    // If the donor`s blood group matches patients blood group this function returns a boolean value
     function isBloodGroupMatch(
         address _donor,
         address _patient
@@ -236,8 +235,6 @@ contract OrganDonation {
         }
     }
 
-    // This function checks and validates all the parameters of patient and donor, and calculate a score
-    // This score is stored in organMatchSummary data structure declared above, so patients doctor and patient can take a sound decesion of giving thier consent accordingly.
     function calculateCompatibilityScore(
         address _patient,
         address _donor,
@@ -283,7 +280,7 @@ contract OrganDonation {
             _compatibilityScore += 1;
         }
 
-        uint256 waitingTime = block.timestamp - requestRegistrationDate;
+        uint256 waitingTime = block.timestamp - requestRegistrationDate; // change to registration date
         uint256 waitingDays = waitingTime / (1 days);
 
         if (waitingDays >= 0 && waitingDays <= 30) {
@@ -297,10 +294,6 @@ contract OrganDonation {
         return summary;
     }
 
-    // As finding patient-donor mathch is crucial and important aspect of this application, it is computaion intensive
-    // So, we have implemented it in hybrid fashion, finding out suitable donor, is delegated to backend system
-    // But the suitable donor selected by system will be required to be validated on smart contract.
-    // Therefore this function takes care of validating the donor match found by our backend system.
     function validateOrganMatch(
         uint256 _compatibilityScore,
         address _donor,
@@ -312,7 +305,7 @@ contract OrganDonation {
         IUserRegistry.OrganStatus organStatus = userRegistry
             .checkOrganAvaiablity(_donor, uint256(requiredOrgan));
         if (organStatus != IUserRegistry.OrganStatus.Available) {
-            emit matchStatus(requestId, "Organs Do not match");
+            emit matchStatusFailed(requestId, _donor, "Organs Do not match");
             return false;
         }
         organMatchSummary memory summary = calculateCompatibilityScore(
@@ -327,86 +320,77 @@ contract OrganDonation {
                 matchSummary[requestId].bloodGroupMatch = true;
                 organRequests[requestId].donor = _donor;
                 organRequests[requestId].status = Status.MATCHED;
-                emit matchStatus(requestId, "Match Completed Sucessfully");
+                emit matchStatusSuccess(
+                    requestId,
+                    _donor,
+                    "Match Completed Sucessfully"
+                );
                 return true;
             }
         }
-
+        emit matchStatusFailed(
+            requestId,
+            _donor,
+            "Compatibility Score did not match"
+        );
         return false;
     }
 
-    // This functionality checks whethere patients doctor has approved the organ from donor, and patient has given out their consent.
-    function initiateOrganRemoval(uint _requestID) public onlyHospital {
-        require(
-            organRequests[_requestID].status == Status.MATCHED &&
-                organRequests[_requestID].doctorApproval &&
-                organRequests[_requestID].patientConsent,
-            "Not matched"
-        );
-        organRequests[_requestID].status = Status.DONOR_PROCEDURE_INPROGRESS;
-    }
-
-    // This functionality allows donors hospital to mark donors organ removal procedure to sucessfull.
-    // Also, marks the particular organ from donor has been donated, and that particular organ from donor will not be further available.
     function markDonorProcedureSucessfull(uint _requestID) public onlyHospital {
-        require(
-            organRequests[_requestID].status ==
-                Status.DONOR_PROCEDURE_INPROGRESS,
-            "invalid request"
-        );
         OrganRequest memory organRequest = organRequests[_requestID];
         userRegistry.markOrganDonated(
             organRequest.donor,
             uint256(organRequest.organType)
         );
         organRequests[_requestID].status = Status.DONOR_PROCEDURE_COMPLETE;
+        emit requestStateChanged(_requestID, "Donor organ removed");
     }
 
-    // This function allows donors hospital to initiate transport procedure once donor`s procedure is completed 
     function initiateTransport(uint _requestID) public onlyHospital {
         require(
             organRequests[_requestID].status == Status.DONOR_PROCEDURE_COMPLETE,
             "Donor process not complete"
         );
         organRequests[_requestID].status = Status.DONOR_ORGAN_SHIPPED;
+        emit requestStateChanged(_requestID, "Organ is transported");
     }
 
-    // Patients Hospital can access this functionality to mark that they have received organ sucessfully
-    function organReceived(uint requestID) public onlyHospital {
-        require(organRequests[requestID].status == Status.DONOR_ORGAN_SHIPPED);
-        organRequests[requestID].status = Status.ORGAN_RECEIVED;
+    function organReceived(uint _requestID) public onlyHospital {
+        require(organRequests[_requestID].status == Status.DONOR_ORGAN_SHIPPED);
+        organRequests[_requestID].status = Status.ORGAN_RECEIVED;
+        emit requestStateChanged(_requestID, "Organ received");
     }
 
-    // Patients hospital can utilize this functionality to mark that patients procedure has been initiated for that request id.
-    function organTransplantInitiated(uint requestID) public onlyHospital {
-        require(organRequests[requestID].status == Status.ORGAN_RECEIVED);
-        organRequests[requestID].status = Status.PATIENT_PROCEDURE_INPROGRESS;
-    }
-
-    // This functionality allows patient hospital to mark that they have completed patient side procedure successfuly
-    function completeTransplant(uint requestID) public onlyHospital {
+    function completeTransplant(uint _requestID) public onlyHospital {
         require(
-            organRequests[requestID].status ==
-                Status.PATIENT_PROCEDURE_INPROGRESS
+            organRequests[_requestID].status ==
+                Status.ORGAN_RECEIVED
         );
-        organRequests[requestID].status = Status.COMPLETED;
+        organRequests[_requestID].status = Status.COMPLETED;
+        emit requestStateChanged(_requestID, "Organ transplanted sucessdully");
     }
 
-    //Getter function to get or look up to particular request
     function getRequest(
         uint _requestID
     ) external view returns (OrganRequest memory) {
         return organRequests[_requestID];
     }
 
-    //Getter function to get or look up to particular organ match summary
+    function getRequestStatus(uint _requestID) external view returns (Status) {
+        return organRequests[_requestID].status;
+    }
+
     function getOrganMatchSummary(
         uint requestId
     ) external view returns (organMatchSummary memory) {
         return matchSummary[requestId];
     }
 
-    // Getter function to get or lookup to particular user details
+    function isValidRequestID(uint256 requestID) public view returns (bool) {
+        // Check if the requestID is within the valid range of the organRequests array
+        return (requestID > 0 && requestID <= organRequests.length);
+    }
+
     function getUserDetails(
         address _userAddress
     ) public view returns (IUserRegistry.User memory) {

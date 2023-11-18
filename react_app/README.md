@@ -17,23 +17,30 @@
 ```bash
   cd react_app
 ```
+3. Change git branch
 
-3. Install all the dependency
+```bash
+  git checkout second-part
+```
+
+4. Install all the dependency
 
 ```bash
   npm install
 ```
 
-4. Run the project 
+5. Run the project 
 
 ```bash
   npm start
 ```
 
-5. Project will start on: 
+6. Project will start on: 
 
-    `http://localhost:3000/hospital/login`
+    `http://localhost:3000/login`
 
+7. Register hospital:
 
+    `http://localhost:3000/admin/register/hospital`
 
 

@@ -1,0 +1,361 @@
+{
+  "contractName": "IOrganDonation",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "requestID",
+          "type": "uint256"
+        }
+      ],
+      "name": "isValidRequestID",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "requestID",
+          "type": "uint256"
+        }
+      ],
+      "name": "getRequestStatus",
+      "outputs": [
+        {
+          "internalType": "enum IOrganDonation.Status",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.13+commit.abaa5c0e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"requestID\",\"type\":\"uint256\"}],\"name\":\"getRequestStatus\",\"outputs\":[{\"internalType\":\"enum IOrganDonation.Status\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"requestID\",\"type\":\"uint256\"}],\"name\":\"isValidRequestID\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/IOrganDonationRequest.sol\":\"IOrganDonation\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/IOrganDonationRequest.sol\":{\"keccak256\":\"0xd33ba33053a2cabf8c3a14246bafb0aba83a6da0f223de484a6bc26af2a3defb\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c58bad783251f2907ef72e82839bfb5f5438caf04e5357525c8267f33c88dc77\",\"dweb:/ipfs/QmQw5eqATy8giuthkjrQepjYPPF3Nxxa8z9kmFyrp2ba2U\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.13;\n\ninterface IOrganDonation {\n        enum Status{\n        PENDING,  //0\n        MATCHED,  //1\n        DONOR_REJECTED,  //2\n        DONOR_PROCEDURE_INPROGRESS, //3\n        DONOR_PROCEDURE_COMPLETE, //4\n        DONOR_ORGAN_SHIPPED, //5\n        ORGAN_RECEIVED, //6\n        PATIENT_PROCEDURE_INPROGRESS, // 7\n        COMPLETED //7\n    }\n    \n    function isValidRequestID(uint256 requestID) external view returns (bool);\n    function getRequestStatus(uint256 requestID) external view returns(Status);\n}\n",
+  "sourcePath": "/home/shubham/PROJECT/medical-freelance/smart_contract/contracts/IOrganDonationRequest.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/IOrganDonationRequest.sol",
+    "exportedSymbols": {
+      "IOrganDonation": [
+        115
+      ]
+    },
+    "id": 116,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 89,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".13"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "32:24:1"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IOrganDonation",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 115,
+        "linearizedBaseContracts": [
+          115
+        ],
+        "name": "IOrganDonation",
+        "nameLocation": "68:14:1",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "IOrganDonation.Status",
+            "id": 99,
+            "members": [
+              {
+                "id": 90,
+                "name": "PENDING",
+                "nameLocation": "114:7:1",
+                "nodeType": "EnumValue",
+                "src": "114:7:1"
+              },
+              {
+                "id": 91,
+                "name": "MATCHED",
+                "nameLocation": "136:7:1",
+                "nodeType": "EnumValue",
+                "src": "136:7:1"
+              },
+              {
+                "id": 92,
+                "name": "DONOR_REJECTED",
+                "nameLocation": "158:14:1",
+                "nodeType": "EnumValue",
+                "src": "158:14:1"
+              },
+              {
+                "id": 93,
+                "name": "DONOR_PROCEDURE_INPROGRESS",
+                "nameLocation": "187:26:1",
+                "nodeType": "EnumValue",
+                "src": "187:26:1"
+              },
+              {
+                "id": 94,
+                "name": "DONOR_PROCEDURE_COMPLETE",
+                "nameLocation": "227:24:1",
+                "nodeType": "EnumValue",
+                "src": "227:24:1"
+              },
+              {
+                "id": 95,
+                "name": "DONOR_ORGAN_SHIPPED",
+                "nameLocation": "265:19:1",
+                "nodeType": "EnumValue",
+                "src": "265:19:1"
+              },
+              {
+                "id": 96,
+                "name": "ORGAN_RECEIVED",
+                "nameLocation": "298:14:1",
+                "nodeType": "EnumValue",
+                "src": "298:14:1"
+              },
+              {
+                "id": 97,
+                "name": "PATIENT_PROCEDURE_INPROGRESS",
+                "nameLocation": "326:28:1",
+                "nodeType": "EnumValue",
+                "src": "326:28:1"
+              },
+              {
+                "id": 98,
+                "name": "COMPLETED",
+                "nameLocation": "369:9:1",
+                "nodeType": "EnumValue",
+                "src": "369:9:1"
+              }
+            ],
+            "name": "Status",
+            "nameLocation": "98:6:1",
+            "nodeType": "EnumDefinition",
+            "src": "93:295:1"
+          },
+          {
+            "functionSelector": "c5e9bdb9",
+            "id": 106,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isValidRequestID",
+            "nameLocation": "407:16:1",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 102,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 101,
+                  "mutability": "mutable",
+                  "name": "requestID",
+                  "nameLocation": "432:9:1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 106,
+                  "src": "424:17:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 100,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "424:7:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "423:19:1"
+            },
+            "returnParameters": {
+              "id": 105,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 104,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 106,
+                  "src": "466:4:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 103,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "466:4:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "465:6:1"
+            },
+            "scope": 115,
+            "src": "398:74:1",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "d8a4676f",
+            "id": 114,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getRequestStatus",
+            "nameLocation": "486:16:1",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 109,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 108,
+                  "mutability": "mutable",
+                  "name": "requestID",
+                  "nameLocation": "511:9:1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 114,
+                  "src": "503:17:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 107,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "503:7:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "502:19:1"
+            },
+            "returnParameters": {
+              "id": 113,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 112,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 114,
+                  "src": "544:6:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_enum$_Status_$99",
+                    "typeString": "enum IOrganDonation.Status"
+                  },
+                  "typeName": {
+                    "id": 111,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 110,
+                      "name": "Status",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 99,
+                      "src": "544:6:1"
+                    },
+                    "referencedDeclaration": 99,
+                    "src": "544:6:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_enum$_Status_$99",
+                      "typeString": "enum IOrganDonation.Status"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "543:8:1"
+            },
+            "scope": 115,
+            "src": "477:75:1",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 116,
+        "src": "58:496:1",
+        "usedErrors": []
+      }
+    ],
+    "src": "32:523:1"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.13+commit.abaa5c0e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.10",
+  "updatedAt": "2023-08-29T13:51:58.493Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

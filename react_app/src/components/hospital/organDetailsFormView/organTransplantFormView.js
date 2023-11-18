@@ -5,7 +5,9 @@ import { useParams } from 'react-router-dom';
 import HospitalSideNav from '../sideNav'
 import jwtDecode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
-import { HOSPITAL_CONSTANT } from '../../../constants/hospital/hospitalConstants';
+import { HOSPITAL_CONSTANT } from '../../../constants/hospitalConstants';
+import axios from 'axios';
+
 const { HOSPITAL_LOGIN_PAGE, GET_TRANSPLANT_DETAILS } = HOSPITAL_CONSTANT
 const { Content } = Layout;
 
@@ -31,18 +33,18 @@ const OrganTransplantFormView = () => {
       const jwtToken = localStorage.getItem('jwt');
       if (jwtToken) {
         const decoded = jwtDecode(jwtToken);
-        if (decoded && decoded.loginId) {
+        if (decoded && decoded.sub) {
 
-          setLoginUserId(decoded.loginId);
-          let URL = `${GET_TRANSPLANT_DETAILS}=${requestId}`
+          setLoginUserId(decoded.sub);
+          let URL = `${GET_TRANSPLANT_DETAILS}=${requestId}&userId=${patientId}`
 
-          const response = await fetch(URL);
-          const { transplantDetails } = await response.json();
+          const response = await axios.get(URL);
+          const { data } = response.data;
+          const { transplantDetails } = data;
           console.log("data2:", transplantDetails);
-          setTransplantDoctorName(transplantDetails.transplantDoctorName);
-          setTransplantDoctorId(transplantDetails.transplantDoctorId);
-          setDonorName(transplantDetails.donorName);
-          setStatus(transplantDetails.status);
+          setTransplantDoctorName(transplantDetails.operationDoctorName);
+          setTransplantDoctorId(transplantDetails.operationDoctorId);
+          setStatus(transplantDetails.operationStatus);
           setOperationDate(transplantDetails.operationDate);
           setOperationTime(transplantDetails.operationTime);
         } else {
@@ -91,13 +93,13 @@ const OrganTransplantFormView = () => {
               </Row>
               <Row>
                 <Col span={12}>
-                  <Form.Item label="Donor Name">
-                    <Input value={donorName} disabled style={inputBoxStyle} />
+                  <Form.Item label="Operation Status" >
+                    <Input value={status} disabled style={inputBoxStyle} />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item label="Operation Status" >
-                    <Input value={status} disabled style={inputBoxStyle} />
+                  <Form.Item label="Operation Time">
+                    <Input value={operationTime} disabled style={inputBoxStyle} />
                   </Form.Item>
                 </Col>
               </Row>
@@ -105,11 +107,6 @@ const OrganTransplantFormView = () => {
                 <Col span={12}>
                   <Form.Item label="Operation Date">
                     <Input value={operationDate} disabled style={inputBoxStyle} />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item label="Operation Time">
-                    <Input value={operationTime} disabled style={inputBoxStyle} />
                   </Form.Item>
                 </Col>
               </Row>

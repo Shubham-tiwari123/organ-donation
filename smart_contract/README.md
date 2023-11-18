@@ -89,20 +89,26 @@ The `IOTData` contract is responsible for storing sensor data related to organ t
   cd smart_contract
 ```
 
-3. Install dependencies
+3. Change git branch
+
+```bash
+  git checkout second-part
+```
+
+4. Install dependencies
 
 ```bash
   npm install truffle
 ```
 
-4. Start local blockchain using ganache
+5. Start local blockchain using ganache
 
-5. Compile all smart contracts
+6. Compile all smart contracts
 ```bash
  trufle compile
  ```
 
-6. Migrate smart contracts to local blockchain
+7. Migrate smart contracts to local blockchain
 ```bash
   truffle migrate
   ```

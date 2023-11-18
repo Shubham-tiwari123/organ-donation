@@ -5,7 +5,9 @@ import { useParams } from 'react-router-dom';
 import HospitalSideNav from '../sideNav'
 import jwtDecode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
-import { HOSPITAL_CONSTANT } from '../../../constants/hospital/hospitalConstants';
+import { HOSPITAL_CONSTANT } from '../../../constants/hospitalConstants';
+import axios from 'axios';
+
 const { HOSPITAL_LOGIN_PAGE, GET_TRANSPLANT_DETAILS } = HOSPITAL_CONSTANT
 const { Content } = Layout;
 
@@ -30,14 +32,14 @@ const OrganTransportFormView = () => {
       const jwtToken = localStorage.getItem('jwt');
       if (jwtToken) {
         const decoded = jwtDecode(jwtToken);
-        if (decoded && decoded.loginId) {
+        if (decoded && decoded.sub) {
 
-          setLoginUserId(decoded.loginId);
-          let URL = `${GET_TRANSPLANT_DETAILS}=${requestId}`
+          setLoginUserId(decoded.sub);
+          let URL = `${GET_TRANSPLANT_DETAILS}=${requestId}&userId=${patientId}`
 
-          const response = await fetch(URL);
-          const { transportationDetails } = await response.json();
-          console.log("data2:", transportationDetails);
+          const response = await axios.get(URL);
+          const { data } = response.data;
+          const { transportationDetails } = data;
           setVehicleNumber(transportationDetails.vehicleNumber);
           setShippingDate(transportationDetails.shippingDate);
           setShippingTime(transportationDetails.shippingTime);

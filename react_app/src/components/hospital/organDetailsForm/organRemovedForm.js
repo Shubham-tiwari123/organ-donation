@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import '../style.css'
-import { Layout, Form, Input, Row, Col, Divider, DatePicker, TimePicker, Button, Modal, Spin, message } from 'antd';
+import { Layout, Form, Input, Row, Col, Divider, DatePicker, TimePicker, Button, Modal, Spin, message, Select } from 'antd';
 import { useParams } from 'react-router-dom';
-import HospitalSideNav from '../sideNav'
-import { v4 as uuidv4 } from 'uuid';
+import HospitalSideNav from '../sideNav';
 import jwtDecode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
-import { HOSPITAL_CONSTANT } from '../../../constants/hospital/hospitalConstants';
+import { HOSPITAL_CONSTANT } from '../../../constants/hospitalConstants';
 import axios from 'axios';
-const { HOSPITAL_LOGIN_PAGE, SAVE_ORGAN_REMOVED_API } = HOSPITAL_CONSTANT
+import { Option } from 'antd/es/mentions';
+import { markDonorProcedureSuccessful } from '../../../user_register_web3'
+
+const { HOSPITAL_LOGIN_PAGE, SAVE_ORGAN_REMOVED_API, GET_DOCTOR_PATIENT_LIST, HOSPITAL_REACT_BASE_URL } = HOSPITAL_CONSTANT
 const format = 'HH:mm';
 const { Content } = Layout;
 
 
-const OrganRemovedForm = () => {
-  const { doctorId, doctorName, bloodGroup, organRequest, donorId, patientId, requestId  } = useParams();
+const OrganRemovedForm = ({ contractInstance }) => {
+  const { requestDetails, requestId, patientId } = useParams();
   const navigate = useNavigate();
   const [loginUserID, setLoginUserId] = useState(null);
   const [operationTime, setOperationTime] = useState('');
@@ -22,19 +24,50 @@ const OrganRemovedForm = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [disable, setDisabled] = useState(false)
+  const [patientName, setPatientName] = useState();
+  const [donorName, setDonorName] = useState()
+  const [doctorName, setDoctorName] = useState();
+  const [organRequest, setOrganRequest] = useState()
+  const [bloodGroup, setBloodGroup] = useState()
+  const [doctorList, setDoctorList] = useState([]);
+  const [selectedDoctortId, setSelectedDoctorId] = useState('');
+  const [selectedDoctortName, setSelectedDoctorName] = useState('');
+  // const [requestId, setRequestId] = useState()
 
   const inputBoxStyle = {
     fontSize: "16px",
     color: "black"
   }
 
+  const handleDoctorChange = (value) => {
+    setSelectedDoctorName(value);
+    const selectedData = doctorList.find((item) => item.doctorName === value);
+    setSelectedDoctorId(selectedData?.id || '');
+    setSelectedDoctorName(selectedData?.doctorName || '')
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const jwtToken = localStorage.getItem('jwt');
       if (jwtToken) {
         const decoded = jwtDecode(jwtToken);
-        if (decoded && decoded.loginId) {
-          setLoginUserId(decoded.loginId);
+        if (decoded && decoded.sub) {
+          let URL = `${GET_DOCTOR_PATIENT_LIST}=${decoded.sub}`
+
+          const response = await axios.get(URL);
+          const { data } = response.data
+          const { patientList, doctorList } = data;
+          console.log("doctorList:", doctorList);
+
+          let jsonData = JSON.parse(requestDetails)
+          setLoginUserId(decoded.sub);
+          setPatientName(jsonData.patientName)
+          setDonorName(jsonData.donorName)
+          setDoctorName(jsonData.doctorName)
+          setOrganRequest(jsonData.organRequired)
+          setBloodGroup(jsonData.bloodGroup);
+          setDoctorList(doctorList);
+          // setRequestId(jsonData.requestId)
         } else {
           navigate(HOSPITAL_LOGIN_PAGE);
         }
@@ -51,26 +84,45 @@ const OrganRemovedForm = () => {
     setIsModalVisible(true);
     setIsLoading(true);
     setTimeout(async () => {
+      let jsonData = JSON.parse(requestDetails)
+      console.log("JsonData:", jsonData);
 
       let data = {
         operationTime: operationTime,
         operationDate: operationDate,
         requestId: requestId,
         doctorName: doctorName,
-        doctorId: doctorId,
-        bloodGroup:bloodGroup,
-        organRequest:organRequest,
-        donorId:donorId,
+        doctorId: selectedDoctortId,
+        bloodGroup: bloodGroup,
+        organRequest: organRequest,
+        donorId: jsonData.donorId,
         patientId: patientId,
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
         createdBy: loginUserID
       }
 
       try {
-        const response = await axios.post(SAVE_ORGAN_REMOVED_API, data)
-        console.log("Response:", response);
-        message.success('Record Saved successful!!');
-        setDisabled(true)
+        // make web3 call 
+        // function:  markDonorProcedureSucessfull()
+        const chainResponse = await markDonorProcedureSuccessful(parseInt(requestId), contractInstance)
+        console.log("chainResponse:", chainResponse);
+        if (chainResponse.error === true) {
+          message.error('Something went wrong. Try Latter...');
+        } else {
+          const response = await axios.post(SAVE_ORGAN_REMOVED_API, data)
+          console.log("Response:", response);
+          let { status } = response.data
+          if (status == 200) {
+            message.success('Record Saved successful!!');
+            setTimeout(() => {
+              let url = `${HOSPITAL_REACT_BASE_URL}/request/${requestId}/${patientId}`
+              navigate(url);
+            }, 500)
+
+          } else {
+            message.error('Something went wrong while creating record. Try Later!!');
+          }
+        }
       } catch (error) {
         console.error('POST request error:', error);
         message.error('Request Failed. Try Later');
@@ -104,16 +156,27 @@ const OrganRemovedForm = () => {
                     <Input value={requestId} disabled style={inputBoxStyle} />
                   </Form.Item>
                 </Col>
-                <Col span={12}>
+                {/* <Col span={12}>
                   <Form.Item label="Doctor Name">
                     <Input value={doctorName} disabled style={inputBoxStyle} />
+                  </Form.Item>
+                </Col> */}
+                <Col span={12}>
+                  <Form.Item label="Donor Doctor Name" name="Doctor Name" rules={[{ required: true }]}>
+                    <Select placeholder="Select Doctor Name" style={{ width: "100%" }} onChange={handleDoctorChange} value={selectedDoctortName}>
+                      {doctorList.map((item) => (
+                        <Option key={item.id} value={item.doctorName}>
+                          {item.doctorName}
+                        </Option>
+                      ))}
+                    </Select>
                   </Form.Item>
                 </Col>
               </Row>
               <Row>
                 <Col span={12}>
-                  <Form.Item label="Patient Id">
-                    <Input value={patientId} disabled style={inputBoxStyle} />
+                  <Form.Item label="Patient Name">
+                    <Input value={patientName} disabled style={inputBoxStyle} />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
@@ -130,20 +193,20 @@ const OrganRemovedForm = () => {
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item label="Donor ID">
-                    <Input value={donorId} disabled style={inputBoxStyle} />
+                  <Form.Item label="Donor Name">
+                    <Input value={donorName} disabled style={inputBoxStyle} />
                   </Form.Item>
                 </Col>
               </Row>
               <Row>
                 <Col span={12}>
-                  <Form.Item label="Operation Date" name="Operation Date"  rules={[{ required: true }]}>
-                    <DatePicker value={operationDate} style={{width : "100%"}} onChange={(value, dateString)=>setOperationDate(dateString)} disabled={disable}/>
+                  <Form.Item label="Operation Date" name="Operation Date" rules={[{ required: true }]}>
+                    <DatePicker value={operationDate} style={{ width: "100%" }} onChange={(value, dateString) => setOperationDate(dateString)} disabled={disable} />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item label="Operation Time" name="Operation Time"  rules={[{ required: true }]}>
-                    <TimePicker format={format} style={{width : "100%"}} onChange={(value, timeString)=>setOperationTime(timeString)} disabled={disable}/>
+                  <Form.Item label="Operation Time" name="Operation Time" rules={[{ required: true }]}>
+                    <TimePicker format={format} style={{ width: "100%" }} onChange={(value, timeString) => setOperationTime(timeString)} disabled={disable} />
                   </Form.Item>
                 </Col>
               </Row>

@@ -5,12 +5,14 @@ import { useParams } from 'react-router-dom';
 import HospitalSideNav from '../sideNav'
 import jwtDecode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
-import { HOSPITAL_CONSTANT } from '../../../constants/hospital/hospitalConstants';
+import { HOSPITAL_CONSTANT } from '../../../constants/hospitalConstants';
+import axios from 'axios';
+
 const { HOSPITAL_LOGIN_PAGE, GET_TRANSPLANT_DETAILS } = HOSPITAL_CONSTANT
 const { Content } = Layout;
 
 const OrganReceivedFormView = () => {
-  const { requestId } = useParams();
+  const { requestId, patientId } = useParams();
   const navigate = useNavigate();
 
   const [loginUserID, setLoginUserId] = useState(null);
@@ -30,20 +32,19 @@ const OrganReceivedFormView = () => {
       const jwtToken = localStorage.getItem('jwt');
       if (jwtToken) {
         const decoded = jwtDecode(jwtToken);
-        if (decoded && decoded.loginId) {
+        if (decoded && decoded.sub) {
 
-          setLoginUserId(decoded.loginId);
-          let URL = `${GET_TRANSPLANT_DETAILS}=${requestId}`
+          setLoginUserId(decoded.sub);
+          let URL = `${GET_TRANSPLANT_DETAILS}=${requestId}&userId=${patientId}`
 
-          const response = await fetch(URL);
-          const { receivingDetails } = await response.json();;
+          const response = await axios.get(URL);
+          const { data } = response.data;
+          const { receivingDetails } = data;
 
-          setReceivingDoctorId(receivingDetails.receivingDoctorId);
-          setReceivingDoctorName(receivingDetails.receivingDoctorName);
+          setReceivingDoctorId(receivingDetails.receiverDoctorId);
+          setReceivingDoctorName(receivingDetails.receiverDoctorName);
           setReceivingDate(receivingDetails.receivingDate);
           setReceivingTime(receivingDetails.receivingTime);
-          // setReceivingHospitalId(receivingDetails.receivingHospitalId);
-          // setReceivingHospitalName(receivingDetails.receivingHospitalName);
         } else {
           navigate(HOSPITAL_LOGIN_PAGE);
         }

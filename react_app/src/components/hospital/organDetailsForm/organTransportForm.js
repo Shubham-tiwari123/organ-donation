@@ -5,14 +5,16 @@ import { useParams } from 'react-router-dom';
 import HospitalSideNav from '../sideNav'
 import jwtDecode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
-import { HOSPITAL_CONSTANT } from '../../../constants/hospital/hospitalConstants';
+import { HOSPITAL_CONSTANT } from '../../../constants/hospitalConstants';
 import axios from 'axios';
-const { HOSPITAL_LOGIN_PAGE, SAVE_ORGAN_TRANSPORT_API } = HOSPITAL_CONSTANT
+import { initiateTransport } from '../../../user_register_web3'
+
+const { HOSPITAL_LOGIN_PAGE, SAVE_ORGAN_TRANSPORT_API, HOSPITAL_REACT_BASE_URL } = HOSPITAL_CONSTANT
 const { Content } = Layout;
 const format = 'HH:mm';
 
-const OrganTransportForm = () => {
-  const { requestId } = useParams();
+const OrganTransportForm = ({ contractInstance }) => {
+  const { requestId, patientId } = useParams();
   const navigate = useNavigate();
   const [loginUserID, setLoginUserId] = useState(null);
   const [disable, setDisabled] = useState(false)
@@ -33,8 +35,8 @@ const OrganTransportForm = () => {
       const jwtToken = localStorage.getItem('jwt');
       if (jwtToken) {
         const decoded = jwtDecode(jwtToken);
-        if (decoded && decoded.loginId) {
-          setLoginUserId(decoded.loginId);
+        if (decoded && decoded.sub) {
+          setLoginUserId(decoded.sub);
         } else {
           navigate(HOSPITAL_LOGIN_PAGE);
         }
@@ -56,16 +58,34 @@ const OrganTransportForm = () => {
         shippingTime: shippingTime,
         shippingDate: shippingDate,
         requestId: requestId,
+        patientId: patientId,
         vehicleNumber: vehicleNumber,
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
         createdBy: loginUserID
       }
 
       try {
-        const response = await axios.post(SAVE_ORGAN_TRANSPORT_API, data)
-        console.log("Response:", response);
-        message.success('Record Saved successful!!');
-        setDisabled(true)
+        // make web3 call 
+        // function:  initiateTransport()
+        const chainResponse = await initiateTransport(parseInt(requestId), contractInstance)
+        console.log("chainResponse:", chainResponse);
+        if (chainResponse.error) {
+          message.error('Something went wrong. Try Latter...');
+        } else {
+          const response = await axios.post(SAVE_ORGAN_TRANSPORT_API, data)
+          console.log("Response:", response);
+          let { status } = response.data
+          if (status == 200) {
+            message.success('Record Saved successful!!');
+            setTimeout(() => {
+              let url = `${HOSPITAL_REACT_BASE_URL}/request/${requestId}/${patientId}`
+              navigate(url);
+            }, 500)
+
+          } else {
+            message.error('Something went wrong while creating record. Try Later!!');
+          }
+        }
       } catch (error) {
         console.error('POST request error:', error);
         message.error('Request Failed. Try Later');
@@ -96,7 +116,7 @@ const OrganTransportForm = () => {
               <Row>
                 <Col span={12}>
                   <Form.Item label="Vehicle Number" name="Vehicle Number" rules={[{ required: true }]}>
-                    <Input value={vehicleNumber} style={inputBoxStyle} onChange={(e) => setVehicleNumber(e.target.value)} disabled={disable}/>
+                    <Input value={vehicleNumber} style={inputBoxStyle} onChange={(e) => setVehicleNumber(e.target.value)} disabled={disable} />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
@@ -113,7 +133,7 @@ const OrganTransportForm = () => {
                 </Col>
                 <Col span={12}>
                   <Form.Item label="Shipping Time" name="Shipping Time" rules={[{ required: true }]}>
-                    <TimePicker format={format} style={{ width: "100%" }} onChange={(value, timeString) => setShippingTime(timeString)} disabled={disable}/>
+                    <TimePicker format={format} style={{ width: "100%" }} onChange={(value, timeString) => setShippingTime(timeString)} disabled={disable} />
                   </Form.Item>
                 </Col>
 

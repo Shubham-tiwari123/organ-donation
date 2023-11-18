@@ -5,15 +5,17 @@ import { useParams } from 'react-router-dom';
 import HospitalSideNav from '../sideNav'
 import jwtDecode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
-import { HOSPITAL_CONSTANT } from '../../../constants/hospital/hospitalConstants';
+import { HOSPITAL_CONSTANT } from '../../../constants/hospitalConstants';
 import axios from 'axios';
-const { HOSPITAL_LOGIN_PAGE, GET_DOCTOR_LIST_API, SAVE_ORGAN_TRANSPLANT_API } = HOSPITAL_CONSTANT
+import { completeTransplant } from '../../../user_register_web3'
+
+const { HOSPITAL_LOGIN_PAGE, GET_DOCTOR_PATIENT_LIST, SAVE_ORGAN_TRANSPLANT_API, HOSPITAL_REACT_BASE_URL } = HOSPITAL_CONSTANT
 const { Content } = Layout;
 const { Option } = Select;
 const format = 'HH:mm';
 
-const OrganTransplantForm = () => {
-  const { requestId } = useParams();
+const OrganTransplantForm = ({ contractInstance }) => {
+  const { requestId, patientId } = useParams();
   const navigate = useNavigate();
   const [loginUserID, setLoginUserId] = useState(null);
 
@@ -35,15 +37,15 @@ const OrganTransplantForm = () => {
       const jwtToken = localStorage.getItem('jwt');
       if (jwtToken) {
         const decoded = jwtDecode(jwtToken);
-        if (decoded && decoded.loginId) {
-          
-          setLoginUserId(decoded.loginId);
-          let URL = `${GET_DOCTOR_LIST_API}=${decoded.loginId}`
+        if (decoded && decoded.sub) {
 
-          const response = await fetch(URL);
-          const { doctorList } = await response.json();
-          console.log("data2:", doctorList);
-          setDoctorList(doctorList);
+          setLoginUserId(decoded.sub);
+          let URL = `${GET_DOCTOR_PATIENT_LIST}=${decoded.sub}`
+
+          const response = await axios.get(URL);
+          const { data } = response.data;
+          console.log("data2:", data.doctorList);
+          setDoctorList(data.doctorList);
         } else {
           navigate(HOSPITAL_LOGIN_PAGE);
         }
@@ -66,16 +68,6 @@ const OrganTransplantForm = () => {
     color: "black"
   }
 
-  const handleSubmit2 = (values) => {
-    // store hospital id also to indicate request is created by 
-    console.log("Operation Time:", operationTime);
-    console.log("Operation Date:", operationDate);
-    console.log("Request Id:", requestId);
-    console.log("doctor name:", doctorName);
-    console.log("doctor Id:", selectedDoctortId);
-    console.log("operation status:", operationStatus);
-  };
-
   const handleSubmit = (values) => {
     setIsModalVisible(true);
     setIsLoading(true);
@@ -85,19 +77,36 @@ const OrganTransplantForm = () => {
         operationTime: operationTime,
         operationDate: operationDate,
         requestId: requestId,
+        patientId: patientId,
         doctorName: doctorName,
         doctorId: selectedDoctortId,
         operationStatus: operationStatus,
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
         createdBy: loginUserID
       }
 
       try {
-        const response = await axios.post(SAVE_ORGAN_TRANSPLANT_API, data)
-        console.log("Response:", response);
-        message.success('Record Saved successful!!');
+        // make web3 call 
+        // function:  completeTransplant()
+        const chainResponse = await completeTransplant(parseInt(requestId), contractInstance)
+        console.log("chainResponse:", chainResponse);
+        if (chainResponse.error) {
+          message.error('Something went wrong. Try Latter...');
+        } else {
+          const response = await axios.post(SAVE_ORGAN_TRANSPLANT_API, data)
+          console.log("Response:", response);
+          let { status } = response.data
+          if (status == 200) {
+            message.success('Record Saved successful!!');
+            setTimeout(() => {
+              let url = `${HOSPITAL_REACT_BASE_URL}/request/${requestId}/${patientId}`
+              navigate(url);
+            }, 500)
 
-        setDisabled(true)
+          } else {
+            message.error('Something went wrong while creating record. Try Later!!');
+          }
+        }
       } catch (error) {
         console.error('POST request error:', error);
         message.error('Request Failed. Try Later');

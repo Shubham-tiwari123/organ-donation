@@ -5,7 +5,9 @@ import { useParams } from 'react-router-dom';
 import HospitalSideNav from '../sideNav'
 import jwtDecode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
-import { HOSPITAL_CONSTANT } from '../../../constants/hospital/hospitalConstants';
+import { HOSPITAL_CONSTANT } from '../../../constants/hospitalConstants';
+import axios from 'axios';
+
 const { HOSPITAL_LOGIN_PAGE, GET_TRANSPLANT_DETAILS } = HOSPITAL_CONSTANT
 const { Content } = Layout;
 
@@ -37,19 +39,20 @@ const OrganRemovedFormView = () => {
       const jwtToken = localStorage.getItem('jwt');
       if (jwtToken) {
         const decoded = jwtDecode(jwtToken);
-        if (decoded && decoded.loginId) {
+        if (decoded && decoded.sub) {
 
-          setLoginUserId(decoded.loginId);
-          let URL = `${GET_TRANSPLANT_DETAILS}=${requestId}`
+          setLoginUserId(decoded.sub);
+          let URL = `${GET_TRANSPLANT_DETAILS}=${requestId}&userId=${patientId}`
 
-          const response = await fetch(URL);
-          const { organDetails } = await response.json();
-          console.log("data2:", organDetails);
+          const response = await axios.get(URL);
+          const { data } = response.data;
+          const { organDetails } = data;
+          console.log("data2:", data);
           setBloodGroup(organDetails.bloodGroup);
-          setDoctorName(organDetails.doctorName);
+          setDoctorName(organDetails.donorDoctorName);
           setPatientName(organDetails.patientName);
           setOrganType(organDetails.organType);
-          setDonorName(organDetails.donorName);
+          setDonorName(organDetails.donorId);
           setOperationDate(organDetails.operationDate);
           setOperationTime(organDetails.operationTime);
           setDonorId(organDetails.donorId);
@@ -112,7 +115,7 @@ const OrganRemovedFormView = () => {
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item label="Donor Name">
+                  <Form.Item label="Donor Id">
                     <Input value={donorName} disabled style={inputBoxStyle} />
                   </Form.Item>
                 </Col>

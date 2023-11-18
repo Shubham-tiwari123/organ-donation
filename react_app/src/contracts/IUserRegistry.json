@@ -1,0 +1,1980 @@
+{
+  "contractName": "IUserRegistry",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "donorID",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "donorAddress",
+          "type": "address"
+        }
+      ],
+      "name": "DonorRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "hospitalID",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "hospitalAddress",
+          "type": "address"
+        }
+      ],
+      "name": "HospitalRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "patientID",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "patientAddress",
+          "type": "address"
+        }
+      ],
+      "name": "PatientRegistered",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_userAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "enum IUserRegistry.Bloodtype",
+          "name": "_bloodtype",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_bmi",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum IUserRegistry.UserRole",
+          "name": "_userType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum IUserRegistry.OrganType[]",
+          "name": "organs",
+          "type": "uint8[]"
+        }
+      ],
+      "name": "registerUser",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "hospitalAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        }
+      ],
+      "name": "registerHospital",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_userAddress",
+          "type": "address"
+        }
+      ],
+      "name": "getUser",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "userID",
+              "type": "uint256"
+            },
+            {
+              "internalType": "enum IUserRegistry.Bloodtype",
+              "name": "bloodGroup",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint256",
+              "name": "BMI",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "hospitalAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "organRefusalList",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "enum IUserRegistry.UserRole",
+              "name": "userType",
+              "type": "uint8"
+            }
+          ],
+          "internalType": "struct IUserRegistry.User",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_hospitalAddress",
+          "type": "address"
+        }
+      ],
+      "name": "getHosptial",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "hospitalID",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "hospitalAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "isRegistered",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct IUserRegistry.Hospital",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_donorAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_organType",
+          "type": "uint256"
+        }
+      ],
+      "name": "checkOrganAvaiablity",
+      "outputs": [
+        {
+          "internalType": "enum IUserRegistry.OrganStatus",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_donorAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_organType",
+          "type": "uint256"
+        }
+      ],
+      "name": "markOrganDonated",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "patientAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "requestID",
+          "type": "uint256"
+        }
+      ],
+      "name": "addRefusal",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_hospitalAddress",
+          "type": "address"
+        }
+      ],
+      "name": "isHospitalRegistered",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.13+commit.abaa5c0e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"donorID\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"donorAddress\",\"type\":\"address\"}],\"name\":\"DonorRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"hospitalID\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"hospitalAddress\",\"type\":\"address\"}],\"name\":\"HospitalRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"patientID\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"patientAddress\",\"type\":\"address\"}],\"name\":\"PatientRegistered\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"patientAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"requestID\",\"type\":\"uint256\"}],\"name\":\"addRefusal\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_donorAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_organType\",\"type\":\"uint256\"}],\"name\":\"checkOrganAvaiablity\",\"outputs\":[{\"internalType\":\"enum IUserRegistry.OrganStatus\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_hospitalAddress\",\"type\":\"address\"}],\"name\":\"getHosptial\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"hospitalID\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"hospitalAddress\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"isRegistered\",\"type\":\"bool\"}],\"internalType\":\"struct IUserRegistry.Hospital\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_userAddress\",\"type\":\"address\"}],\"name\":\"getUser\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"userID\",\"type\":\"uint256\"},{\"internalType\":\"enum IUserRegistry.Bloodtype\",\"name\":\"bloodGroup\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"BMI\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"hospitalAddress\",\"type\":\"address\"},{\"internalType\":\"uint256[]\",\"name\":\"organRefusalList\",\"type\":\"uint256[]\"},{\"internalType\":\"enum IUserRegistry.UserRole\",\"name\":\"userType\",\"type\":\"uint8\"}],\"internalType\":\"struct IUserRegistry.User\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_hospitalAddress\",\"type\":\"address\"}],\"name\":\"isHospitalRegistered\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_donorAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_organType\",\"type\":\"uint256\"}],\"name\":\"markOrganDonated\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"hospitalAddress\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"_name\",\"type\":\"string\"}],\"name\":\"registerHospital\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_userAddress\",\"type\":\"address\"},{\"internalType\":\"enum IUserRegistry.Bloodtype\",\"name\":\"_bloodtype\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"_bmi\",\"type\":\"uint256\"},{\"internalType\":\"enum IUserRegistry.UserRole\",\"name\":\"_userType\",\"type\":\"uint8\"},{\"internalType\":\"enum IUserRegistry.OrganType[]\",\"name\":\"organs\",\"type\":\"uint8[]\"}],\"name\":\"registerUser\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/IUserRegistry.sol\":\"IUserRegistry\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/IUserRegistry.sol\":{\"keccak256\":\"0xbfc8c3d4b430c31f4c91702743152f04efe7ede74d3b41c7714bc1ad5578da3c\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://70d35a0dd825603c3c0d2eb009cc4aaea849148b9c96c88142db05e008e4e2fa\",\"dweb:/ipfs/QmQFFEyb3UsLv3RpHHhUyF2oD1JiyQeqsi1Gc3nneqBwGt\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.13;\n\ninterface IUserRegistry {\n    enum Bloodtype {\n        A_positive,\n        A_negative,\n        B_positive,\n        B_negative,\n        O_positive,\n        O_negative,\n        AB_positive,\n        AB_negative\n    }\n\n    enum OrganType {\n        Cornea,\n        Kidneys,\n        Heart,\n        Liver,\n        Lungs,\n        Pancreas,\n        SmallIntestine,\n        Skin\n    }\n\n    enum UrgencyType {\n        Low,\n        Medium,\n        High\n    }\n\n    enum OrganStatus {\n        NotListed,\n        Available,\n        Donated\n    }\n\n    enum UserRole {\n        Doctor,\n        Donor,\n        Patient\n    }\n\n    struct User {\n        uint userID;\n        Bloodtype bloodGroup;\n        uint256 BMI;\n        address hospitalAddress;\n        uint256[] organRefusalList;\n        UserRole userType;\n    }\n\n    struct Hospital {\n        uint256 hospitalID;\n        string name;\n        address hospitalAddress;\n        bool isRegistered;\n    }\n\n    event DonorRegistered(uint256 donorID, address indexed donorAddress);\n    event PatientRegistered(uint256 patientID, address indexed patientAddress);\n    event HospitalRegistered(uint256 hospitalID, address indexed hospitalAddress);\n\n    function registerUser(\n        address _userAddress,\n        Bloodtype _bloodtype,\n        uint256 _bmi,\n        UserRole _userType,\n        OrganType[] memory organs\n    ) external;\n\n    function registerHospital(address hospitalAddress, string memory _name) external;\n\n    function getUser(address _userAddress) external view returns (User memory);\n\n    function getHosptial(address _hospitalAddress) external view returns (Hospital memory);\n\n    function checkOrganAvaiablity(address _donorAddress, uint256 _organType) external view returns (OrganStatus);\n\n    function markOrganDonated(address _donorAddress, uint _organType) external returns (bool);\n\n    function addRefusal(address patientAddress, uint256 requestID) external;\n\n    function isHospitalRegistered(address _hospitalAddress) external view returns (bool);\n}\n",
+  "sourcePath": "/home/shubham/PROJECT/medical-freelance/smart_contract/contracts/IUserRegistry.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/IUserRegistry.sol",
+    "exportedSymbols": {
+      "IUserRegistry": [
+        264
+      ]
+    },
+    "id": 265,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 117,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".13"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "32:24:2"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IUserRegistry",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 264,
+        "linearizedBaseContracts": [
+          264
+        ],
+        "name": "IUserRegistry",
+        "nameLocation": "68:13:2",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "IUserRegistry.Bloodtype",
+            "id": 126,
+            "members": [
+              {
+                "id": 118,
+                "name": "A_positive",
+                "nameLocation": "113:10:2",
+                "nodeType": "EnumValue",
+                "src": "113:10:2"
+              },
+              {
+                "id": 119,
+                "name": "A_negative",
+                "nameLocation": "133:10:2",
+                "nodeType": "EnumValue",
+                "src": "133:10:2"
+              },
+              {
+                "id": 120,
+                "name": "B_positive",
+                "nameLocation": "153:10:2",
+                "nodeType": "EnumValue",
+                "src": "153:10:2"
+              },
+              {
+                "id": 121,
+                "name": "B_negative",
+                "nameLocation": "173:10:2",
+                "nodeType": "EnumValue",
+                "src": "173:10:2"
+              },
+              {
+                "id": 122,
+                "name": "O_positive",
+                "nameLocation": "193:10:2",
+                "nodeType": "EnumValue",
+                "src": "193:10:2"
+              },
+              {
+                "id": 123,
+                "name": "O_negative",
+                "nameLocation": "213:10:2",
+                "nodeType": "EnumValue",
+                "src": "213:10:2"
+              },
+              {
+                "id": 124,
+                "name": "AB_positive",
+                "nameLocation": "233:11:2",
+                "nodeType": "EnumValue",
+                "src": "233:11:2"
+              },
+              {
+                "id": 125,
+                "name": "AB_negative",
+                "nameLocation": "254:11:2",
+                "nodeType": "EnumValue",
+                "src": "254:11:2"
+              }
+            ],
+            "name": "Bloodtype",
+            "nameLocation": "93:9:2",
+            "nodeType": "EnumDefinition",
+            "src": "88:183:2"
+          },
+          {
+            "canonicalName": "IUserRegistry.OrganType",
+            "id": 135,
+            "members": [
+              {
+                "id": 127,
+                "name": "Cornea",
+                "nameLocation": "302:6:2",
+                "nodeType": "EnumValue",
+                "src": "302:6:2"
+              },
+              {
+                "id": 128,
+                "name": "Kidneys",
+                "nameLocation": "318:7:2",
+                "nodeType": "EnumValue",
+                "src": "318:7:2"
+              },
+              {
+                "id": 129,
+                "name": "Heart",
+                "nameLocation": "335:5:2",
+                "nodeType": "EnumValue",
+                "src": "335:5:2"
+              },
+              {
+                "id": 130,
+                "name": "Liver",
+                "nameLocation": "350:5:2",
+                "nodeType": "EnumValue",
+                "src": "350:5:2"
+              },
+              {
+                "id": 131,
+                "name": "Lungs",
+                "nameLocation": "365:5:2",
+                "nodeType": "EnumValue",
+                "src": "365:5:2"
+              },
+              {
+                "id": 132,
+                "name": "Pancreas",
+                "nameLocation": "380:8:2",
+                "nodeType": "EnumValue",
+                "src": "380:8:2"
+              },
+              {
+                "id": 133,
+                "name": "SmallIntestine",
+                "nameLocation": "398:14:2",
+                "nodeType": "EnumValue",
+                "src": "398:14:2"
+              },
+              {
+                "id": 134,
+                "name": "Skin",
+                "nameLocation": "422:4:2",
+                "nodeType": "EnumValue",
+                "src": "422:4:2"
+              }
+            ],
+            "name": "OrganType",
+            "nameLocation": "282:9:2",
+            "nodeType": "EnumDefinition",
+            "src": "277:155:2"
+          },
+          {
+            "canonicalName": "IUserRegistry.UrgencyType",
+            "id": 139,
+            "members": [
+              {
+                "id": 136,
+                "name": "Low",
+                "nameLocation": "465:3:2",
+                "nodeType": "EnumValue",
+                "src": "465:3:2"
+              },
+              {
+                "id": 137,
+                "name": "Medium",
+                "nameLocation": "478:6:2",
+                "nodeType": "EnumValue",
+                "src": "478:6:2"
+              },
+              {
+                "id": 138,
+                "name": "High",
+                "nameLocation": "494:4:2",
+                "nodeType": "EnumValue",
+                "src": "494:4:2"
+              }
+            ],
+            "name": "UrgencyType",
+            "nameLocation": "443:11:2",
+            "nodeType": "EnumDefinition",
+            "src": "438:66:2"
+          },
+          {
+            "canonicalName": "IUserRegistry.OrganStatus",
+            "id": 143,
+            "members": [
+              {
+                "id": 140,
+                "name": "NotListed",
+                "nameLocation": "537:9:2",
+                "nodeType": "EnumValue",
+                "src": "537:9:2"
+              },
+              {
+                "id": 141,
+                "name": "Available",
+                "nameLocation": "556:9:2",
+                "nodeType": "EnumValue",
+                "src": "556:9:2"
+              },
+              {
+                "id": 142,
+                "name": "Donated",
+                "nameLocation": "575:7:2",
+                "nodeType": "EnumValue",
+                "src": "575:7:2"
+              }
+            ],
+            "name": "OrganStatus",
+            "nameLocation": "515:11:2",
+            "nodeType": "EnumDefinition",
+            "src": "510:78:2"
+          },
+          {
+            "canonicalName": "IUserRegistry.UserRole",
+            "id": 147,
+            "members": [
+              {
+                "id": 144,
+                "name": "Doctor",
+                "nameLocation": "618:6:2",
+                "nodeType": "EnumValue",
+                "src": "618:6:2"
+              },
+              {
+                "id": 145,
+                "name": "Donor",
+                "nameLocation": "634:5:2",
+                "nodeType": "EnumValue",
+                "src": "634:5:2"
+              },
+              {
+                "id": 146,
+                "name": "Patient",
+                "nameLocation": "649:7:2",
+                "nodeType": "EnumValue",
+                "src": "649:7:2"
+              }
+            ],
+            "name": "UserRole",
+            "nameLocation": "599:8:2",
+            "nodeType": "EnumDefinition",
+            "src": "594:68:2"
+          },
+          {
+            "canonicalName": "IUserRegistry.User",
+            "id": 163,
+            "members": [
+              {
+                "constant": false,
+                "id": 149,
+                "mutability": "mutable",
+                "name": "userID",
+                "nameLocation": "695:6:2",
+                "nodeType": "VariableDeclaration",
+                "scope": 163,
+                "src": "690:11:2",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 148,
+                  "name": "uint",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "690:4:2",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 152,
+                "mutability": "mutable",
+                "name": "bloodGroup",
+                "nameLocation": "721:10:2",
+                "nodeType": "VariableDeclaration",
+                "scope": 163,
+                "src": "711:20:2",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_enum$_Bloodtype_$126",
+                  "typeString": "enum IUserRegistry.Bloodtype"
+                },
+                "typeName": {
+                  "id": 151,
+                  "nodeType": "UserDefinedTypeName",
+                  "pathNode": {
+                    "id": 150,
+                    "name": "Bloodtype",
+                    "nodeType": "IdentifierPath",
+                    "referencedDeclaration": 126,
+                    "src": "711:9:2"
+                  },
+                  "referencedDeclaration": 126,
+                  "src": "711:9:2",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_enum$_Bloodtype_$126",
+                    "typeString": "enum IUserRegistry.Bloodtype"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 154,
+                "mutability": "mutable",
+                "name": "BMI",
+                "nameLocation": "749:3:2",
+                "nodeType": "VariableDeclaration",
+                "scope": 163,
+                "src": "741:11:2",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 153,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "741:7:2",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 156,
+                "mutability": "mutable",
+                "name": "hospitalAddress",
+                "nameLocation": "770:15:2",
+                "nodeType": "VariableDeclaration",
+                "scope": 163,
+                "src": "762:23:2",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 155,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "762:7:2",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 159,
+                "mutability": "mutable",
+                "name": "organRefusalList",
+                "nameLocation": "805:16:2",
+                "nodeType": "VariableDeclaration",
+                "scope": 163,
+                "src": "795:26:2",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                  "typeString": "uint256[]"
+                },
+                "typeName": {
+                  "baseType": {
+                    "id": 157,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "795:7:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 158,
+                  "nodeType": "ArrayTypeName",
+                  "src": "795:9:2",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                    "typeString": "uint256[]"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 162,
+                "mutability": "mutable",
+                "name": "userType",
+                "nameLocation": "840:8:2",
+                "nodeType": "VariableDeclaration",
+                "scope": 163,
+                "src": "831:17:2",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_enum$_UserRole_$147",
+                  "typeString": "enum IUserRegistry.UserRole"
+                },
+                "typeName": {
+                  "id": 161,
+                  "nodeType": "UserDefinedTypeName",
+                  "pathNode": {
+                    "id": 160,
+                    "name": "UserRole",
+                    "nodeType": "IdentifierPath",
+                    "referencedDeclaration": 147,
+                    "src": "831:8:2"
+                  },
+                  "referencedDeclaration": 147,
+                  "src": "831:8:2",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_enum$_UserRole_$147",
+                    "typeString": "enum IUserRegistry.UserRole"
+                  }
+                },
+                "visibility": "internal"
+              }
+            ],
+            "name": "User",
+            "nameLocation": "675:4:2",
+            "nodeType": "StructDefinition",
+            "scope": 264,
+            "src": "668:187:2",
+            "visibility": "public"
+          },
+          {
+            "canonicalName": "IUserRegistry.Hospital",
+            "id": 172,
+            "members": [
+              {
+                "constant": false,
+                "id": 165,
+                "mutability": "mutable",
+                "name": "hospitalID",
+                "nameLocation": "895:10:2",
+                "nodeType": "VariableDeclaration",
+                "scope": 172,
+                "src": "887:18:2",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 164,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "887:7:2",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 167,
+                "mutability": "mutable",
+                "name": "name",
+                "nameLocation": "922:4:2",
+                "nodeType": "VariableDeclaration",
+                "scope": 172,
+                "src": "915:11:2",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_string_storage_ptr",
+                  "typeString": "string"
+                },
+                "typeName": {
+                  "id": 166,
+                  "name": "string",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "915:6:2",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_storage_ptr",
+                    "typeString": "string"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 169,
+                "mutability": "mutable",
+                "name": "hospitalAddress",
+                "nameLocation": "944:15:2",
+                "nodeType": "VariableDeclaration",
+                "scope": 172,
+                "src": "936:23:2",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 168,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "936:7:2",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 171,
+                "mutability": "mutable",
+                "name": "isRegistered",
+                "nameLocation": "974:12:2",
+                "nodeType": "VariableDeclaration",
+                "scope": 172,
+                "src": "969:17:2",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bool",
+                  "typeString": "bool"
+                },
+                "typeName": {
+                  "id": 170,
+                  "name": "bool",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "969:4:2",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  }
+                },
+                "visibility": "internal"
+              }
+            ],
+            "name": "Hospital",
+            "nameLocation": "868:8:2",
+            "nodeType": "StructDefinition",
+            "scope": 264,
+            "src": "861:132:2",
+            "visibility": "public"
+          },
+          {
+            "anonymous": false,
+            "eventSelector": "499d3f753f32ce16fa9bd2dbe862d12be2a6fb8270d9e15d5b7e6eef963d4d85",
+            "id": 178,
+            "name": "DonorRegistered",
+            "nameLocation": "1005:15:2",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 177,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 174,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "donorID",
+                  "nameLocation": "1029:7:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 178,
+                  "src": "1021:15:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 173,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1021:7:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 176,
+                  "indexed": true,
+                  "mutability": "mutable",
+                  "name": "donorAddress",
+                  "nameLocation": "1054:12:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 178,
+                  "src": "1038:28:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 175,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1038:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1020:47:2"
+            },
+            "src": "999:69:2"
+          },
+          {
+            "anonymous": false,
+            "eventSelector": "5eac531a816ac6546a4c3edbf9748745fe74cfd5806cd8fa8a4a01b71248bf84",
+            "id": 184,
+            "name": "PatientRegistered",
+            "nameLocation": "1079:17:2",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 183,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 180,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "patientID",
+                  "nameLocation": "1105:9:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 184,
+                  "src": "1097:17:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 179,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1097:7:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 182,
+                  "indexed": true,
+                  "mutability": "mutable",
+                  "name": "patientAddress",
+                  "nameLocation": "1132:14:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 184,
+                  "src": "1116:30:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 181,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1116:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1096:51:2"
+            },
+            "src": "1073:75:2"
+          },
+          {
+            "anonymous": false,
+            "eventSelector": "a1fd3231f7912e48ffbf52db08250262416750cd0c9618106dd67eee527a1f02",
+            "id": 190,
+            "name": "HospitalRegistered",
+            "nameLocation": "1159:18:2",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 189,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 186,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "hospitalID",
+                  "nameLocation": "1186:10:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 190,
+                  "src": "1178:18:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 185,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1178:7:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 188,
+                  "indexed": true,
+                  "mutability": "mutable",
+                  "name": "hospitalAddress",
+                  "nameLocation": "1214:15:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 190,
+                  "src": "1198:31:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 187,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1198:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1177:53:2"
+            },
+            "src": "1153:78:2"
+          },
+          {
+            "functionSelector": "af077f65",
+            "id": 207,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "registerUser",
+            "nameLocation": "1246:12:2",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 205,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 192,
+                  "mutability": "mutable",
+                  "name": "_userAddress",
+                  "nameLocation": "1276:12:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 207,
+                  "src": "1268:20:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 191,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1268:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 195,
+                  "mutability": "mutable",
+                  "name": "_bloodtype",
+                  "nameLocation": "1308:10:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 207,
+                  "src": "1298:20:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_enum$_Bloodtype_$126",
+                    "typeString": "enum IUserRegistry.Bloodtype"
+                  },
+                  "typeName": {
+                    "id": 194,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 193,
+                      "name": "Bloodtype",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 126,
+                      "src": "1298:9:2"
+                    },
+                    "referencedDeclaration": 126,
+                    "src": "1298:9:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_enum$_Bloodtype_$126",
+                      "typeString": "enum IUserRegistry.Bloodtype"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 197,
+                  "mutability": "mutable",
+                  "name": "_bmi",
+                  "nameLocation": "1336:4:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 207,
+                  "src": "1328:12:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 196,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1328:7:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 200,
+                  "mutability": "mutable",
+                  "name": "_userType",
+                  "nameLocation": "1359:9:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 207,
+                  "src": "1350:18:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_enum$_UserRole_$147",
+                    "typeString": "enum IUserRegistry.UserRole"
+                  },
+                  "typeName": {
+                    "id": 199,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 198,
+                      "name": "UserRole",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 147,
+                      "src": "1350:8:2"
+                    },
+                    "referencedDeclaration": 147,
+                    "src": "1350:8:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_enum$_UserRole_$147",
+                      "typeString": "enum IUserRegistry.UserRole"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 204,
+                  "mutability": "mutable",
+                  "name": "organs",
+                  "nameLocation": "1397:6:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 207,
+                  "src": "1378:25:2",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_enum$_OrganType_$135_$dyn_memory_ptr",
+                    "typeString": "enum IUserRegistry.OrganType[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 202,
+                      "nodeType": "UserDefinedTypeName",
+                      "pathNode": {
+                        "id": 201,
+                        "name": "OrganType",
+                        "nodeType": "IdentifierPath",
+                        "referencedDeclaration": 135,
+                        "src": "1378:9:2"
+                      },
+                      "referencedDeclaration": 135,
+                      "src": "1378:9:2",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_enum$_OrganType_$135",
+                        "typeString": "enum IUserRegistry.OrganType"
+                      }
+                    },
+                    "id": 203,
+                    "nodeType": "ArrayTypeName",
+                    "src": "1378:11:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_enum$_OrganType_$135_$dyn_storage_ptr",
+                      "typeString": "enum IUserRegistry.OrganType[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1258:151:2"
+            },
+            "returnParameters": {
+              "id": 206,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1418:0:2"
+            },
+            "scope": 264,
+            "src": "1237:182:2",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "4fbaa023",
+            "id": 214,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "registerHospital",
+            "nameLocation": "1434:16:2",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 212,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 209,
+                  "mutability": "mutable",
+                  "name": "hospitalAddress",
+                  "nameLocation": "1459:15:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 214,
+                  "src": "1451:23:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 208,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1451:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 211,
+                  "mutability": "mutable",
+                  "name": "_name",
+                  "nameLocation": "1490:5:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 214,
+                  "src": "1476:19:2",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 210,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1476:6:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1450:46:2"
+            },
+            "returnParameters": {
+              "id": 213,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1505:0:2"
+            },
+            "scope": 264,
+            "src": "1425:81:2",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "6f77926b",
+            "id": 222,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getUser",
+            "nameLocation": "1521:7:2",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 217,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 216,
+                  "mutability": "mutable",
+                  "name": "_userAddress",
+                  "nameLocation": "1537:12:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 222,
+                  "src": "1529:20:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 215,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1529:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1528:22:2"
+            },
+            "returnParameters": {
+              "id": 221,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 220,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 222,
+                  "src": "1574:11:2",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_User_$163_memory_ptr",
+                    "typeString": "struct IUserRegistry.User"
+                  },
+                  "typeName": {
+                    "id": 219,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 218,
+                      "name": "User",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 163,
+                      "src": "1574:4:2"
+                    },
+                    "referencedDeclaration": 163,
+                    "src": "1574:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_User_$163_storage_ptr",
+                      "typeString": "struct IUserRegistry.User"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1573:13:2"
+            },
+            "scope": 264,
+            "src": "1512:75:2",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "e4fa160c",
+            "id": 230,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getHosptial",
+            "nameLocation": "1602:11:2",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 225,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 224,
+                  "mutability": "mutable",
+                  "name": "_hospitalAddress",
+                  "nameLocation": "1622:16:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 230,
+                  "src": "1614:24:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 223,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1614:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1613:26:2"
+            },
+            "returnParameters": {
+              "id": 229,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 228,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 230,
+                  "src": "1663:15:2",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Hospital_$172_memory_ptr",
+                    "typeString": "struct IUserRegistry.Hospital"
+                  },
+                  "typeName": {
+                    "id": 227,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 226,
+                      "name": "Hospital",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 172,
+                      "src": "1663:8:2"
+                    },
+                    "referencedDeclaration": 172,
+                    "src": "1663:8:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Hospital_$172_storage_ptr",
+                      "typeString": "struct IUserRegistry.Hospital"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1662:17:2"
+            },
+            "scope": 264,
+            "src": "1593:87:2",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "7c235691",
+            "id": 240,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "checkOrganAvaiablity",
+            "nameLocation": "1695:20:2",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 235,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 232,
+                  "mutability": "mutable",
+                  "name": "_donorAddress",
+                  "nameLocation": "1724:13:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 240,
+                  "src": "1716:21:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 231,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1716:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 234,
+                  "mutability": "mutable",
+                  "name": "_organType",
+                  "nameLocation": "1747:10:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 240,
+                  "src": "1739:18:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 233,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1739:7:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1715:43:2"
+            },
+            "returnParameters": {
+              "id": 239,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 238,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 240,
+                  "src": "1782:11:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_enum$_OrganStatus_$143",
+                    "typeString": "enum IUserRegistry.OrganStatus"
+                  },
+                  "typeName": {
+                    "id": 237,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 236,
+                      "name": "OrganStatus",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 143,
+                      "src": "1782:11:2"
+                    },
+                    "referencedDeclaration": 143,
+                    "src": "1782:11:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_enum$_OrganStatus_$143",
+                      "typeString": "enum IUserRegistry.OrganStatus"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1781:13:2"
+            },
+            "scope": 264,
+            "src": "1686:109:2",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "c557f69c",
+            "id": 249,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "markOrganDonated",
+            "nameLocation": "1810:16:2",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 245,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 242,
+                  "mutability": "mutable",
+                  "name": "_donorAddress",
+                  "nameLocation": "1835:13:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 249,
+                  "src": "1827:21:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 241,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1827:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 244,
+                  "mutability": "mutable",
+                  "name": "_organType",
+                  "nameLocation": "1855:10:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 249,
+                  "src": "1850:15:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 243,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1850:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1826:40:2"
+            },
+            "returnParameters": {
+              "id": 248,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 247,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 249,
+                  "src": "1885:4:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 246,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1885:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1884:6:2"
+            },
+            "scope": 264,
+            "src": "1801:90:2",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "57370280",
+            "id": 256,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "addRefusal",
+            "nameLocation": "1906:10:2",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 254,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 251,
+                  "mutability": "mutable",
+                  "name": "patientAddress",
+                  "nameLocation": "1925:14:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 256,
+                  "src": "1917:22:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 250,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1917:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 253,
+                  "mutability": "mutable",
+                  "name": "requestID",
+                  "nameLocation": "1949:9:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 256,
+                  "src": "1941:17:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 252,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1941:7:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1916:43:2"
+            },
+            "returnParameters": {
+              "id": 255,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1968:0:2"
+            },
+            "scope": 264,
+            "src": "1897:72:2",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "bc84243e",
+            "id": 263,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isHospitalRegistered",
+            "nameLocation": "1984:20:2",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 259,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 258,
+                  "mutability": "mutable",
+                  "name": "_hospitalAddress",
+                  "nameLocation": "2013:16:2",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 263,
+                  "src": "2005:24:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 257,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2005:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2004:26:2"
+            },
+            "returnParameters": {
+              "id": 262,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 261,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 263,
+                  "src": "2054:4:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 260,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2054:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2053:6:2"
+            },
+            "scope": 264,
+            "src": "1975:85:2",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 265,
+        "src": "58:2004:2",
+        "usedErrors": []
+      }
+    ],
+    "src": "32:2031:2"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.13+commit.abaa5c0e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.10",
+  "updatedAt": "2023-08-29T13:51:58.495Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

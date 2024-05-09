@@ -1,9 +1,11 @@
 import Web3 from "web3";
-import UserRegistry from './contracts/UserRegistry.json'
-import OrganDonation from './contracts/OrganDonation.json'
-import IOTData from './contracts/IOTData.json'
-
+import UserRegistry from './contracts/contracts/UserRegistry.sol/UserRegistry.json'
+import OrganDonation from './contracts/contracts/Organdonation.sol/OrganDonation.json'
+import IOTData from './contracts/contracts/IOTSmartContract.sol/IOTData.json'
+const constant = require('./constants/commonConstant')
+// import {USER_REGISTER_SMART_CONTRACT_ADDRESS, ORGAN_DONATION_SMART_CONTRACT_ADDRESS, IOT_SMART_CONTRACT_ADDRESS} from './constants/commonConstant'
 const web3 = new Web3(window.ethereum);
+const BigNumber = require('bignumber.js');
 
 async function initalizeContractsMetamask(provider) {
   const web3 = new Web3(provider);
@@ -11,22 +13,22 @@ async function initalizeContractsMetamask(provider) {
   const accounts = await web3.eth.getAccounts();
   const networkId = await web3.eth.net.getId();
 
-  let deployedNetwork = await UserRegistry.networks[networkId];
+  // let deployedNetwork = await UserRegistry.networks[networkId];
   const userRegistryInstance = new web3.eth.Contract(
     UserRegistry.abi,
-    deployedNetwork.address
+    constant.CommonConstant.USER_REGISTER_SMART_CONTRACT_ADDRESS
   );
 
-  deployedNetwork = await OrganDonation.networks[networkId];
+  // deployedNetwork = await OrganDonation.networks[networkId];
   const organDonationInstance = new web3.eth.Contract(
     OrganDonation.abi,
-    deployedNetwork.address
+    constant.CommonConstant.ORGAN_DONATION_SMART_CONTRACT_ADDRESS
   );
 
-  deployedNetwork = await IOTData.networks[networkId];
+  // deployedNetwork = await IOTData.networks[networkId];
   const IOTDataInstance = new web3.eth.Contract(
     IOTData.abi,
-    deployedNetwork.address
+    constant.CommonConstant.IOT_SMART_CONTRACT_ADDRESS
   );
 
   return { accounts, userRegistryInstance, organDonationInstance, IOTDataInstance }
@@ -47,12 +49,16 @@ async function registerHospital(hospitalAddress, hospitalName, contract) {
       .encodeABI();
 
     const txObject = {
+      from: from_address,
       nonce: nonce,
       gasPrice: gasPrice,
-      gasLimit: web3.utils.toHex(3000000),
+      // gasLimit: web3.utils.toHex(3000000),
       to: contract_address,
       data: txData,
     };
+    const estimatedGas = await web3.eth.estimateGas(txObject);
+    console.log("estimatedGas:",estimatedGas);
+    txObject.gasLimit = estimatedGas;
 
     const txReceipt = await web3.eth.sendTransaction({
       from: from_address,
@@ -81,7 +87,7 @@ async function registerUser(userAddress, bloodType, bmi, userType, organTypes, c
     let from_address = await web3.eth.getAccounts();
     from_address = from_address[0]
 
-    const nonce = await web3.eth.getTransactionCount(contract_address);
+    const nonce = await web3.eth.getTransactionCount(from_address);
     const gasPrice = await web3.eth.getGasPrice();
     console.log("Gas price:", gasPrice);
     const txnData = await contract.methods
@@ -89,12 +95,17 @@ async function registerUser(userAddress, bloodType, bmi, userType, organTypes, c
       .encodeABI();
 
     const txnObject = {
+      from: from_address,
       nonce: nonce,
       gasPrice: gasPrice,
-      gasLimit: web3.utils.toHex(5000000),
+      // gasLimit: web3.utils.toHex(5000000),
       to: contract_address,
       data: txnData,
     };
+
+    const estimatedGas = await web3.eth.estimateGas(txnObject);
+    console.log("estimatedGas:",estimatedGas);
+    txnObject.gasLimit = estimatedGas;
 
     const txReceipt = await web3.eth.sendTransaction({
       from: from_address,
@@ -123,18 +134,23 @@ async function raiseOrganRequest(patientAddr, urgencyLevel, organType, patientSu
     let from_address = await web3.eth.getAccounts();
     from_address = from_address[0]
 
-    const nonce = await web3.eth.getTransactionCount(hospitalAddr);
+    const nonce = await web3.eth.getTransactionCount(from_address);
     const gasPrice = await web3.eth.getGasPrice();
 
     const txnData = contract.methods.registerOrganRequest(patientAddr, urgencyLevel, organType, patientSurgeon).encodeABI();
 
     const txnObject = {
+      from: from_address,
       nonce: nonce,
       gasPrice: gasPrice,
-      gasLimit: web3.utils.toHex(3000000),
+      // gasLimit: web3.utils.toHex(3000000),
       to: contract_address, // Use the contract address instead of 'contract'
       data: txnData,
     };
+
+    const estimatedGas = await web3.eth.estimateGas(txnObject);
+    console.log("estimatedGas:",estimatedGas);
+    txnObject.gasLimit = estimatedGas;
 
     const txReceipt = await web3.eth.sendTransaction({
       from: from_address,
@@ -170,6 +186,7 @@ async function getUserDetails(address, contract) {
 
 async function checkOrganAvailability(address, organ_enum, contract) {
   try {
+    console.log("checking organ availaibe");
     const data = await contract.methods.checkOrganAvaiablity(address, organ_enum).call();
     console.log("Data: ", Number(data));
   }
@@ -180,8 +197,8 @@ async function checkOrganAvailability(address, organ_enum, contract) {
 
 async function isHospitalRegistered(hospitalAddr, contract) {
   try {
+    console.log("is hospital registerered?");
     const result = await contract.methods.isHospitalRegistered(hospitalAddr).call();
-    console.log(result);
     console.log("result:", result);
     return { error: false, message: result }
   }
@@ -223,20 +240,40 @@ async function registerPatientConsent(consent, requestID, contract) {
 
 async function registerOrganRequest(patient, urgencyLevel, organType, patientSurgeon, contract) {
   try {
-    const accounts = await web3.eth.getAccounts();
-    const result = await contract.methods
-      .registerOrganRequest(patient, urgencyLevel, organType, patientSurgeon)
-      .send({ from: accounts[0] });
+    let contract_address = contract._address
+    let from_address = await web3.eth.getAccounts();
+    from_address = from_address[0]
 
-    console.log("result:", result);
+    const nonce = await web3.eth.getTransactionCount(from_address);
+    const gasPrice = await web3.eth.getGasPrice();
 
-    const events = await contract.getPastEvents('allEvents', {
-      fromBlock: result.blockNumber,
-      toBlock: result.blockNumber,
+    const txnData = contract.methods.registerOrganRequest(patient, urgencyLevel, organType, patientSurgeon).encodeABI();
+
+    const txnObject = {
+      from: from_address,
+      nonce: nonce,
+      gasPrice: gasPrice,
+      // gasLimit: web3.utils.toHex(3000000),
+      to: contract_address, // Use the contract address instead of 'contract'
+      data: txnData,
+    };
+
+    const estimatedGas = await web3.eth.estimateGas(txnObject);
+    console.log("estimatedGas:",estimatedGas);
+    txnObject.gasLimit = estimatedGas;
+
+    const txReceipt = await web3.eth.sendTransaction({
+      from: from_address,
+      ...txnObject
     });
 
-    console.log('request Id', events[0].returnValues.requestID, typeof events[0].returnValues.requestID);
-    console.log('Event Id', web3.utils.toBigInt(events[0].returnValues.requestID).toString());
+    const events = await contract.getPastEvents('allEvents', {
+      fromBlock: txReceipt.blockNumber,
+      toBlock: txReceipt.blockNumber,
+    });
+
+    console.log('Emitted Events:', events);
+    console.log('Transaction Hash:', txReceipt);
 
     return { error: false, requestID: web3.utils.toBigInt(events[0].returnValues.requestID).toString() }
 
@@ -248,22 +285,39 @@ async function registerOrganRequest(patient, urgencyLevel, organType, patientSur
 
 async function validateOrganMatch(compatibilityScore, donor, requestId, contract) {
   try {
-    console.log("donor:", donor);
-    console.log("requestId:", requestId, typeof requestId);
-    console.log("compatibilityScore",compatibilityScore, typeof compatibilityScore);
-    const accounts = await web3.eth.getAccounts();
-    console.log("accounts:", accounts[0]);
-    // console.log("web3 function:", contract.methods);
-    const txReceipt = await contract.methods
-      .validateOrganMatch(compatibilityScore, donor, parseInt(requestId))
-      .send({ from: accounts[0] });
+    console.log("validateOrganMatch:");
+    let contract_address = contract._address
+    let from_address = await web3.eth.getAccounts();
+    from_address = from_address[0]
+    console.log("from_address:", from_address);
+    const nonce = await web3.eth.getTransactionCount(from_address);
+    const gasPrice = await web3.eth.getGasPrice();
 
-    console.log("passesd validate ");
+    const txData = contract.methods
+    .validateOrganMatch(compatibilityScore, donor, parseInt(requestId))
+      .encodeABI();
+
+    const txObject = {
+      from: from_address,
+      nonce: nonce,
+      gasPrice: gasPrice,
+      // gasLimit: web3.utils.toHex(3000000),
+      to: contract_address,
+      data: txData,
+    };
+    const estimatedGas = await web3.eth.estimateGas(txObject);
+    console.log("estimatedGas:",estimatedGas);
+    txObject.gasLimit = estimatedGas;
+
+    const txReceipt = await web3.eth.sendTransaction({
+      from: from_address,
+      ...txObject
+    });
+
     const events = await contract.getPastEvents('allEvents', {
       fromBlock: txReceipt.blockNumber,
       toBlock: txReceipt.blockNumber,
     });
-    console.log("events:", events);
 
     let message = events[0].returnValues != null ? events[0].returnValues.message : null
 
@@ -300,12 +354,41 @@ async function initiateOrganRemoval(requestID, contract) {
 
 async function markDonorProcedureSuccessful(requestID, contract) {
   try {
-    const accounts = await web3.eth.getAccounts();
-    const result = await contract.methods
-      .markDonorProcedureSucessfull(requestID)
-      .send({ from: accounts[0] });
+    console.log("markDonorProcedureSuccessful:");
+    let contract_address = contract._address
+    let from_address = await web3.eth.getAccounts();
+    from_address = from_address[0]
+    console.log("from_address:", from_address);
+    const nonce = await web3.eth.getTransactionCount(from_address);
+    const gasPrice = await web3.eth.getGasPrice();
 
-    console.log("result:", result);
+    const txData = contract.methods
+    .markDonorProcedureSucessfull(requestID)
+      .encodeABI();
+
+    const txObject = {
+      from: from_address,
+      nonce: nonce,
+      gasPrice: gasPrice,
+      // gasLimit: web3.utils.toHex(3000000),
+      to: contract_address,
+      data: txData,
+    };
+    const estimatedGas = await web3.eth.estimateGas(txObject);
+    console.log("estimatedGas:",estimatedGas);
+    txObject.gasLimit = estimatedGas;
+
+    const txReceipt = await web3.eth.sendTransaction({
+      from: from_address,
+      ...txObject
+    });
+
+    const events = await contract.getPastEvents('allEvents', {
+      fromBlock: txReceipt.blockNumber,
+      toBlock: txReceipt.blockNumber,
+    });
+
+    console.log("result:", txReceipt);
     return { error: false }
   } catch (error) {
     console.error("Error while marking donor procedure successful:", error);
@@ -315,14 +398,41 @@ async function markDonorProcedureSuccessful(requestID, contract) {
 
 async function initiateTransport(requestID, contract) {
   try {
-    console.log("typeof:", typeof requestID);
-    console.log("contract:", contract.methods);
-    const accounts = await web3.eth.getAccounts();
-    const result = await contract.methods
-      .initiateTransport(requestID)
-      .send({ from: accounts[0] });
+    console.log("initiateTransport:");
+    let contract_address = contract._address
+    let from_address = await web3.eth.getAccounts();
+    from_address = from_address[0]
+    console.log("from_address:", from_address);
+    const nonce = await web3.eth.getTransactionCount(from_address);
+    const gasPrice = await web3.eth.getGasPrice();
 
-    console.log("result:", result);
+    const txData = contract.methods
+    .initiateTransport(requestID)
+      .encodeABI();
+
+    const txObject = {
+      from: from_address,
+      nonce: nonce,
+      gasPrice: gasPrice,
+      // gasLimit: web3.utils.toHex(3000000),
+      to: contract_address,
+      data: txData,
+    };
+    const estimatedGas = await web3.eth.estimateGas(txObject);
+    console.log("estimatedGas:",estimatedGas);
+    txObject.gasLimit = estimatedGas;
+
+    const txReceipt = await web3.eth.sendTransaction({
+      from: from_address,
+      ...txObject
+    });
+
+    const events = await contract.getPastEvents('allEvents', {
+      fromBlock: txReceipt.blockNumber,
+      toBlock: txReceipt.blockNumber,
+    });
+
+    console.log("result:", txReceipt);
     return { error: false }
   } catch (error) {
     console.error("Error while initiating organ transport:", error);
@@ -332,12 +442,41 @@ async function initiateTransport(requestID, contract) {
 
 async function organReceived(requestID, contract) {
   try {
-    const accounts = await web3.eth.getAccounts();
-    const result = await contract.methods
-      .organReceived(requestID)
-      .send({ from: accounts[0] });
+    console.log("initiateTransport:");
+    let contract_address = contract._address
+    let from_address = await web3.eth.getAccounts();
+    from_address = from_address[0]
+    console.log("from_address:", from_address);
+    const nonce = await web3.eth.getTransactionCount(from_address);
+    const gasPrice = await web3.eth.getGasPrice();
 
-    console.log("result:", result);
+    const txData = contract.methods
+    .organReceived(requestID)
+      .encodeABI();
+
+    const txObject = {
+      from: from_address,
+      nonce: nonce,
+      gasPrice: gasPrice,
+      // gasLimit: web3.utils.toHex(3000000),
+      to: contract_address,
+      data: txData,
+    };
+    const estimatedGas = await web3.eth.estimateGas(txObject);
+    console.log("estimatedGas:",estimatedGas);
+    txObject.gasLimit = estimatedGas;
+
+    const txReceipt = await web3.eth.sendTransaction({
+      from: from_address,
+      ...txObject
+    });
+
+    const events = await contract.getPastEvents('allEvents', {
+      fromBlock: txReceipt.blockNumber,
+      toBlock: txReceipt.blockNumber,
+    });
+
+    console.log("result:", txReceipt);
     return { error: false }
   } catch (error) {
     console.error("Error while marking organ received:", error);
@@ -347,12 +486,42 @@ async function organReceived(requestID, contract) {
 
 async function organTransplantInitiated(requestID, contract) {
   try {
-    const accounts = await web3.eth.getAccounts();
-    const result = await contract.methods
-      .organTransplantInitiated(requestID)
-      .send({ from: accounts[0] });
+    
+    console.log("initiateTransport:");
+    let contract_address = contract._address
+    let from_address = await web3.eth.getAccounts();
+    from_address = from_address[0]
+    console.log("from_address:", from_address);
+    const nonce = await web3.eth.getTransactionCount(from_address);
+    const gasPrice = await web3.eth.getGasPrice();
 
-    console.log("result:", result);
+    const txData = contract.methods
+    .organTransplantInitiated(requestID)
+      .encodeABI();
+
+    const txObject = {
+      from: from_address,
+      nonce: nonce,
+      gasPrice: gasPrice,
+      // gasLimit: web3.utils.toHex(3000000),
+      to: contract_address,
+      data: txData,
+    };
+    const estimatedGas = await web3.eth.estimateGas(txObject);
+    console.log("estimatedGas:",estimatedGas);
+    txObject.gasLimit = estimatedGas;
+
+    const txReceipt = await web3.eth.sendTransaction({
+      from: from_address,
+      ...txObject
+    });
+
+    const events = await contract.getPastEvents('allEvents', {
+      fromBlock: txReceipt.blockNumber,
+      toBlock: txReceipt.blockNumber,
+    });
+
+    console.log("result:", txReceipt);
     return { error: false }
   } catch (error) {
     console.error("Error while initiating organ transplant:", error);

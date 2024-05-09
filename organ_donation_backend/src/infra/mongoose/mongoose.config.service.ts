@@ -12,6 +12,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
     | MongooseModuleOptions
     | Promise<MongooseModuleOptions> {
     const uri = this.config.get<string>('MONGO_URI');
+    console.log("uri:", uri);
     return {
       uri,
     };

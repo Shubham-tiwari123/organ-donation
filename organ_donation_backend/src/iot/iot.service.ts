@@ -31,12 +31,13 @@ export class IotService {
     try {
       const address = await this.web3.eth.getAccounts();
       const networkId = await this.web3.eth.net.getId();
-      let deployedNetwork = await IOTDATA.networks[networkId];
       const IOTDataInstance = new this.web3.eth.Contract(
         IOTDATA.abi,
-        deployedNetwork.address
+        "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
       );
       const sensorData = await IOTDataInstance.methods.getSensorData(requestID).call();
+      console.log("sensorData:",sensorData);
+      
       let data = {
         temprature: sensorData.temprature,
         vibration: sensorData.vibration,
@@ -58,10 +59,9 @@ export class IotService {
     try {
       const address = await this.web3.eth.getAccounts();
       const networkId = await this.web3.eth.net.getId();
-      let deployedNetwork = await IOTDATA.networks[networkId];
       const IOTDataInstance = new this.web3.eth.Contract(
         IOTDATA.abi,
-        deployedNetwork.address
+        "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
       );
 
       const nonce = await this.web3.eth.getTransactionCount(address[0]);
@@ -81,7 +81,7 @@ export class IotService {
         nonce: nonce,
         gasPrice: gasPrice,
         gasLimit: this.web3.utils.toHex(5000000),
-        to: deployedNetwork.address,
+        to: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
         data: txnData,
       };
 

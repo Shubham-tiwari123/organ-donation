@@ -14,6 +14,7 @@ export class IotService {
   private readonly alchemyKey: string;
   private readonly web3: any
   private readonly PRIVATE_KEY : string
+  private smartContractAddress = "0x712516e61C8B383dF4A63CFe83d7701Bce54B03e"
 
   constructor(
     @InjectModel(IOT.name) private iotModel: Model<IOTDocument>,
@@ -31,9 +32,11 @@ export class IotService {
     try {
       const address = await this.web3.eth.getAccounts();
       const networkId = await this.web3.eth.net.getId();
+      console.log("smart:",this.smartContractAddress);
+      
       const IOTDataInstance = new this.web3.eth.Contract(
         IOTDATA.abi,
-        "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+        this.smartContractAddress
       );
       const sensorData = await IOTDataInstance.methods.getSensorData(requestID).call();
       console.log("sensorData:",sensorData);
@@ -61,7 +64,7 @@ export class IotService {
       const networkId = await this.web3.eth.net.getId();
       const IOTDataInstance = new this.web3.eth.Contract(
         IOTDATA.abi,
-        "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+        this.smartContractAddress
       );
 
       const nonce = await this.web3.eth.getTransactionCount(address[0]);
@@ -81,7 +84,7 @@ export class IotService {
         nonce: nonce,
         gasPrice: gasPrice,
         gasLimit: this.web3.utils.toHex(5000000),
-        to: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+        to: this.smartContractAddress,
         data: txnData,
       };
 
@@ -91,8 +94,10 @@ export class IotService {
         fromBlock: txReceipt.blockNumber,
         toBlock: txReceipt.blockNumber,
       });
+      console.log("events:",events);
+      
       // return sensorData;
-      return new ApiResponse(ApiResponseStatus.Success, { message: "IOT DATA SAVED" });
+      return new ApiResponse(ApiResponseStatus.Success, { message: "IOT DATA SAV" });
     }
     catch (error) {
       console.log("Error:", error)
